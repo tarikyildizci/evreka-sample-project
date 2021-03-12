@@ -1,20 +1,27 @@
+import React, { useState } from 'react';
+import DataTable from './components/DataTable';
+import EventDetails from './components/EventDetails';
+import { example_response } from './data';
 function App() {
+  const [data, setData] = useState(example_response);
+  const [selected, setSelected] = useState();
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div
+        style={{
+          height: 'calc(100vh - 2.5rem)',
+          margin: '2.5rem 0 0 2.5rem',
+          backgroundColor: '#EBECEF',
+          display: 'grid',
+          gridTemplateColumns: ' 2fr 1fr',
+          gridGap: '20px',
+          overflow: 'hidden',
+        }}
+      >
+        <DataTable data={data} selected={selected} setSelected={setSelected} />
+        <EventDetails data={data} setData={setData} selected={selected} />
+      </div>
     </div>
   );
 }
