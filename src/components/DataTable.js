@@ -1,56 +1,63 @@
-import React from 'react';
-
-const styles = {
-  dataTable: {
-    width: '100%',
-    padding: '5px',
-    overflow: 'scroll',
-    fontSize: '.9rem',
-  },
-  dataRow: {},
-  dataRowContainer: {
-    height: '100px',
-    width: '100%',
-    backgroundColor: '#FFFFFF',
-    margin: '10px 0',
-    display: 'grid',
-    gridTemplateColumns: '0.3fr 1fr 1fr 1fr 1fr 1fr',
-    overflow: 'hidden',
-  },
-  selectedDataRowContainer: {
-    height: '100px',
-    width: '100%',
-    backgroundColor: '#fff5b3',
-    margin: '10px 0',
-    display: 'grid',
-    gridTemplateColumns: '0.3fr 1fr 1fr 1fr 1fr 1fr',
-  },
-  dataRowHighlightBox: {
-    height: '100%',
-    width: '20px',
-    backgroundColor: '#E9CF30',
-  },
-  dataRowHeader: { fontWeight: '700' },
-};
-
+import React, { useState } from 'react';
+import {
+  DataTable as DataTableContainer,
+  DataRowContainer,
+  DataRowHeader,
+  DataRowHighlightBox,
+  DataTableHead,
+  Select,
+} from '../styled-components/DataTable';
+import { Button } from '../styled-components/Button';
 const DataTable = ({ data, setData, selected, setSelected }) => {
-  const SelectRow = (id) => {
-    setSelected(id);
+  const [sortBy, setSortBy] = useState(0);
+
+  const SelectRow = (item) => {
+    setSelected(item);
   };
+
   return (
-    <div style={styles.dataTable}>
-      <h1>Events</h1>
-      <div>
-        {data.data &&
-          data.data.map((item, index) => (
-            <DataRow
-              data={item}
-              key={index}
-              SelectRow={SelectRow}
-              selected={selected}
-            />
-          ))}
-      </div>
+    <div style={{ overflow: 'scroll' }}>
+      <DataTableHead>
+        <h1 style={{ paddingLeft: '1rem' }}>Events</h1>
+
+        <p>Sort by:</p>
+        <Select
+          type="drowdown"
+          placeholder="Sort by"
+          value={sortBy}
+          onChange={(e) => {
+            setSortBy(e.target.value);
+          }}
+        >
+          <option value={0}>Tarih</option>
+          <option value={1}>Tip</option>
+          <option value={2}>Rota İsmi</option>
+          <option value={3}>Kategori</option>
+          <option value={4}>Aksiyon</option>
+        </Select>
+
+        <Button
+          onClick={() => {
+            setData(SortEvents(data, sortBy));
+          }}
+        >
+          SORT
+        </Button>
+      </DataTableHead>
+
+      <DataTableContainer>
+        <div>
+          {data.data &&
+            data.data.map((item, index) => (
+              <DataRow
+                data={item}
+                key={index}
+                SelectRow={SelectRow}
+                selected={selected}
+              />
+            ))}
+        </div>
+      </DataTableContainer>
     </div>
   );
 };
@@ -60,44 +67,47 @@ export default DataTable;
 const DataRow = ({ data, SelectRow, selected }) => {
   return (
     <div
-      style={styles.dataRow}
       onClick={() => {
-        SelectRow(data.id);
+        SelectRow(data);
       }}
     >
-      <div
-        style={
-          selected === data.id
-            ? styles.selectedDataRowContainer
-            : styles.dataRowContainer
-        }
+      <DataRowContainer
+        selected={selected && selected.id === data.id ? true : false}
       >
-        <div
-          style={
-            data.details[4].value === '-' ? styles.dataRowHighlightBox : {}
-          }
+        <DataRowHighlightBox
+          active={data.details[4].value === '-' ? true : false}
         />
         <div>
-          <p style={styles.dataRowHeader}>{data.details[0].title}</p>
+          <DataRowHeader>{data.details[0].title}</DataRowHeader>
           <p>{data.details[0].value.replace('T', ' ').replace('Z', ' ')}</p>
         </div>
         <div>
-          <p style={styles.dataRowHeader}>{data.details[1].title}</p>
+          <DataRowHeader>{data.details[1].title}</DataRowHeader>
           <p>{data.details[1].value}</p>
         </div>
         <div>
-          <p style={styles.dataRowHeader}>{data.details[2].title}</p>
+          <DataRowHeader>{data.details[2].title}</DataRowHeader>
           <p>{data.details[2].value}</p>
         </div>
         <div>
-          <p style={styles.dataRowHeader}>{data.details[3].title}</p>
+          <DataRowHeader>{data.details[3].title}</DataRowHeader>
           <p>{data.details[3].value}</p>
         </div>
         <div>
-          <p style={styles.dataRowHeader}>{data.details[4].title}</p>
+          <DataRowHeader>{data.details[4].title}</DataRowHeader>
           <p>{data.details[4].value}</p>
         </div>
-      </div>
+      </DataRowContainer>
     </div>
   );
+};
+
+const SortEvents = (array, index) => {
+  const tempArray = JSON.parse(JSON.stringify(array));
+
+  const result = tempArray.data.sort((a, b) =>
+    a.details[index].value > b.details[index].value ? 1 : -1
+  );
+  tempArray.data = result;
+  return tempArray;
 };

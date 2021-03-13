@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 
 const Map = ({ lat, long, markerPopupText }) => {
   return (
@@ -7,7 +7,7 @@ const Map = ({ lat, long, markerPopupText }) => {
       center={[lat, long]}
       zoom={13}
       scrollWheelZoom={true}
-      style={{ height: 200 }}
+      style={{ height: 400, zIndex: '1' }}
     >
       <TileLayer
         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -16,8 +16,15 @@ const Map = ({ lat, long, markerPopupText }) => {
       <Marker position={[lat, long]}>
         <Popup>{markerPopupText ? markerPopupText : `${lat} , ${long}`}</Popup>
       </Marker>
+      <MapUpdate center={[lat, long]} zoom={13} />
     </MapContainer>
   );
 };
 
 export default Map;
+
+function MapUpdate(props) {
+  const map = useMap();
+  map.setView(props.center, props.zoom);
+  return null;
+}

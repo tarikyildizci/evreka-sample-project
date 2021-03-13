@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import DataTable from './components/DataTable';
-import EventDetails from './components/EventDetails';
+import EventDetails from './components/EventDetails/EventDetails';
 import { example_response } from './data';
 function App() {
   const [data, setData] = useState(example_response);
@@ -19,8 +19,22 @@ function App() {
           overflow: 'hidden',
         }}
       >
-        <DataTable data={data} selected={selected} setSelected={setSelected} />
-        <EventDetails data={data} setData={setData} selected={selected} />
+        <DataTable
+          data={data}
+          setData={setData}
+          selected={selected}
+          setSelected={setSelected}
+        />
+        {selected ? (
+          <EventDetails
+            data={data}
+            setData={setData}
+            selected={selected}
+            setSelected={setSelected}
+          />
+        ) : (
+          ''
+        )}
       </div>
     </div>
   );
